@@ -1,10 +1,28 @@
-from fastapi import FastAPI
+import os
+import random
+from datetime import datetime, timedelta, timezone
+from typing import Optional
+
+import httpx
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import auth, tasks, withdraw, admin
+from pydantic import BaseModel, EmailStr
+from supabase import create_client, Client
+
+# ==========================================
+# ১. SUPABASE & APP CONFIGURATION
+# ==========================================
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    print("Warning: Supabase credentials are missing!")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI(title="MicroEarnX Backend API")
 
-# CORS Policy
+# CORS Policy সেটআপ
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -13,12 +31,338 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# রাউটারসমূহ কানেক্ট করা
-app.include_router(auth.router)
-app.include_router(tasks.router)
-app.include_router(withdraw.router)
-app.include_router(admin.router)
+# ==========================================
+# ২. PYDANTIC SCHEMAS (DATA VALIDATION)
+# ==========================================
+class RegisterSchema(BaseModel):
+    email: EmailStr
+    password: str
+    device_id: str
+    device_model: str
+    referral_code: Optional[str] = None
 
+class LoginSchema(BaseModel):
+    email: EmailStr
+    password: str
+
+class WithdrawSchema(BaseModel):
+    user_id: str
+    amount: float
+    method: str
+    account_number: str
+
+class TaskCreateSchema(BaseModel):
+    title: str
+    description: Optional[str] = ""
+    amount: float
+    link: str
+
+class GameRewardSchema(BaseModel):
+    user_id: str
+
+class GmailTaskSubmitSchema(BaseModel):
+    user_id: str
+    created_email: str
+    password_used: str
+
+# ==========================================
+# ৩. HELPER: IMGBB MULTI-KEY FALLBACK
+# ==========================================
+async def upload_to_imgbb(file_bytes: bytes) -> str:
+    # ডেটাবেজ থেকে সচল কী-গুলো নিয়ে আসা
+    keys = supabase.table("imgbb_keys").select("*").eq("is_active", True).execute().data
+    if not keys:
+        raise HTTPException(status_code=500, detail="কোনো সক্রিয় ImgBB API Key পাওয়া যায়নি!")
+
+    async with httpx.AsyncClient() as client:
+        for key_obj in keys:
+            api_key = key_obj["api_key"]
+            try:
+                res = await client.post(
+                    "https://api.imgbb.com/1/upload",
+                    params={"key": api_key},
+                    files={"image": file_bytes},
+                    timeout=15.0
+                )
+                if res.status_code == 200:
+                    return res.json()["data"]["url"]
+                else:
+                    # লিমিট শেষ বা ভুল হলে failed_count বাড়ানো
+                    supabase.table("imgbb_keys").update({
+                        "failed_count": key_obj["failed_count"] + 1
+                    }).eq("id", key_obj["id"]).execute()
+            except Exception:
+                continue
+
+    raise HTTPException(status_code=500, detail="সকল ImgBB API Key কাজ করা বন্ধ করেছে অথবা মেয়াদোত্তীর্ণ!")
+
+# ==========================================
+# ৪. AUTHENTICATION & REFER SYSTEM
+# ==========================================
+@app.post("/auth/register")
+def register(data: RegisterSchema):
+    # ১ ডিভাইসে একটাই একাউন্ট চেক
+    device_exists = supabase.table("users").select("id").eq("device_id", data.device_id).execute().data
+    if device_exists:
+        raise HTTPException(status_code=400, detail="এই ডিভাইস থেকে ইতিমধ্যে একটি একাউন্ট খোলা হয়েছে!")
+
+    referred_by_id = None
+    initial_balance = 50.0  # নরমাল জয়েনিং ৫০ টাকা
+
+    # রেফারেল ভ্যালিডেশন
+    if data.referral_code:
+        referrer = supabase.table("users").select("id, balance, device_model").eq("referral_code", data.referral_code).execute().data
+        if referrer:
+            ref_user = referrer[0]
+            # একই ডিভাইসের মডেল হলে রেফার হবে না
+            if ref_user["device_model"].strip().lower() == data.device_model.strip().lower():
+                raise HTTPException(status_code=400, detail="একই মডেলের ডিভাইসে রেফারেল গ্রহণযোগ্য নয়!")
+
+            referred_by_id = ref_user["id"]
+            initial_balance = 100.0  # রেফারে জয়েন হলে ১০০ টাকা
+            # রেফারার পাবে ১৫ টাকা
+            supabase.table("users").update({"balance": ref_user["balance"] + 15.0}).eq("id", referred_by_id).execute()
+
+    new_refer_code = f"MEX{random.randint(100000, 999999)}"
+    user_payload = {
+        "email": data.email,
+        "password": data.password,
+        "device_id": data.device_id,
+        "device_model": data.device_model,
+        "balance": initial_balance,
+        "referral_code": new_refer_code,
+        "referred_by": referred_by_id
+    }
+    res = supabase.table("users").insert(user_payload).execute()
+    return {"message": "অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!", "data": res.data[0]}
+
+@app.post("/auth/login")
+def login(data: LoginSchema):
+    user = supabase.table("users").select("*").eq("email", data.email).eq("password", data.password).execute().data
+    if not user:
+        raise HTTPException(status_code=400, detail="ভুল ইমেইল অথবা পাসওয়ার্ড!")
+    if user[0]["is_banned"]:
+        raise HTTPException(status_code=403, detail="আপনার অ্যাকাউন্টটি ব্যান করা হয়েছে!")
+    return {"message": "লগইন সফল", "user": user[0]}
+
+# ==========================================
+# ৫. EARNING TASKS & SUBMISSION
+# ==========================================
+@app.get("/tasks")
+def get_user_tasks(user_id: str):
+    # যেসব টাস্ক পেন্ডিং বা অ্যাপ্রুভ হয়েছে তা ফিল্টার করা (রিজেক্ট হলে পুনরায় দেখাবে)
+    done_tasks = supabase.table("task_submissions").select("task_id").eq("user_id", user_id).in_("status", ["pending", "approved"]).execute().data
+    excluded_ids = [t["task_id"] for t in done_tasks]
+
+    query = supabase.table("tasks").select("*").eq("is_active", True)
+    if excluded_ids:
+        query = query.not_.in_("id", excluded_ids)
+    return query.execute().data
+
+@app.get("/task/{task_id}")
+def get_task_details(task_id: str):
+    task = supabase.table("tasks").select("*").eq("id", task_id).execute().data
+    if not task:
+        raise HTTPException(status_code=404, detail="টাস্ক পাওয়া যায়নি!")
+    return task[0]
+
+@app.post("/task/submit")
+async def submit_task_proof(
+    task_id: str = Form(...),
+    user_id: str = Form(...),
+    proof_image: UploadFile = File(...)
+):
+    file_bytes = await proof_image.read()
+    image_url = await upload_to_imgbb(file_bytes)
+
+    submission = {
+        "task_id": task_id,
+        "user_id": user_id,
+        "proof_image": image_url,
+        "status": "pending"
+    }
+    res = supabase.table("task_submissions").insert(submission).execute()
+    return {"message": "টাস্ক সাবমিশন সফল হয়েছে!", "data": res.data}
+
+# ==========================================
+# ৬. GAMES & GMAIL TASKS
+# ==========================================
+@app.post("/games/spin")
+def play_spin(data: GameRewardSchema):
+    user = supabase.table("users").select("balance").eq("id", data.user_id).execute().data
+    if not user:
+        raise HTTPException(status_code=404, detail="ইউজার পাওয়া যায়নি!")
+
+    reward = round(random.uniform(0.5, 5.0), 2)
+    new_bal = user[0]["balance"] + reward
+    supabase.table("users").update({"balance": new_bal}).eq("id", data.user_id).execute()
+    return {"message": "অভিনন্দন!", "reward": reward, "balance": new_bal}
+
+@app.post("/games/scratch")
+def play_scratch(data: GameRewardSchema):
+    user = supabase.table("users").select("balance").eq("id", data.user_id).execute().data
+    if not user:
+        raise HTTPException(status_code=404, detail="ইউজার পাওয়া যায়নি!")
+
+    reward = round(random.uniform(1.0, 8.0), 2)
+    new_bal = user[0]["balance"] + reward
+    supabase.table("users").update({"balance": new_bal}).eq("id", data.user_id).execute()
+    return {"message": "স্ক্র্যাচ সফল হয়েছে!", "reward": reward, "balance": new_bal}
+
+@app.post("/games/gmail-submit")
+def submit_gmail(data: GmailTaskSubmitSchema):
+    submission = {
+        "user_id": data.user_id,
+        "proof_image": f"Gmail: {data.created_email} | Pass: {data.password_used}",
+        "status": "pending"
+    }
+    supabase.table("task_submissions").insert(submission).execute()
+    return {"message": "জিমেইল টাস্ক সফলভাবে জমা দেওয়া হয়েছে!"}
+
+# ==========================================
+# ৭. WITHDRAWAL SYSTEM (CONDITIONS CHECK)
+# ==========================================
+@app.post("/withdraw")
+def withdraw(data: WithdrawSchema):
+    settings = supabase.table("site_settings").select("*").eq("id", 1).execute().data[0]
+
+    # শর্ত ১: মিনিমাম ব্যালেন্স ৫০০
+    if data.amount < settings["min_withdraw"]:
+        raise HTTPException(status_code=400, detail=f"সর্বনিম্ন উইথড্র {settings['min_withdraw']} টাকা!")
+
+    # শর্ত ২: মিনিমাম ৪টি রেফার
+    refer_count = supabase.table("users").select("id", count="exact").eq("referred_by", data.user_id).execute().count
+    if refer_count < settings["min_refer_withdraw"]:
+        raise HTTPException(status_code=400, detail=f"উইথড্র করতে কমপক্ষে {settings['min_refer_withdraw']}টি রেফার প্রয়োজন!")
+
+    # শর্ত ৩: ব্যালেন্স চেক
+    user = supabase.table("users").select("balance").eq("id", data.user_id).execute().data
+    if not user or user[0]["balance"] < data.amount:
+        raise HTTPException(status_code=400, detail="পর্যাপ্ত ব্যালেন্স নেই!")
+
+    # ব্যালেন্স কেটে পেন্ডিং উইথড্র তৈরি
+    supabase.table("users").update({"balance": user[0]["balance"] - data.amount}).eq("id", data.user_id).execute()
+    supabase.table("withdrawals").insert({
+        "user_id": data.user_id,
+        "amount": data.amount,
+        "method": data.method,
+        "account_number": data.account_number,
+        "status": "pending"
+    }).execute()
+
+    return {"message": "উইথড্র রিকোয়েস্ট সফলভাবে সাবমিট হয়েছে"}
+
+# ==========================================
+# ৮. ADMIN PANEL FUNCTIONALITIES (/admin)
+# ==========================================
+@app.get("/admin/dashboard")
+def admin_dashboard():
+    now = datetime.now(timezone.utc)
+    today_start = datetime(now.year, now.month, now.day, tzinfo=timezone.utc).isoformat()
+    yesterday_start = (datetime(now.year, now.month, now.day, tzinfo=timezone.utc) - timedelta(days=1)).isoformat()
+
+    total_users = supabase.table("users").select("id", count="exact").execute().count
+    today_users = supabase.table("users").select("id", count="exact").gte("created_at", today_start).execute().count
+    yesterday_users = supabase.table("users").select("id", count="exact").gte("created_at", yesterday_start).lt("created_at", today_start).execute().count
+    today_submissions = supabase.table("task_submissions").select("id", count="exact").gte("created_at", today_start).execute().count
+    notice = supabase.table("site_settings").select("site_notice").eq("id", 1).execute().data[0]["site_notice"]
+
+    return {
+        "total_users": total_users,
+        "today_users": today_users,
+        "yesterday_users": yesterday_users,
+        "today_submissions": today_submissions,
+        "site_notice": notice
+    }
+
+@app.post("/admin/notice")
+def update_site_notice(notice: str = Query(...)):
+    supabase.table("site_settings").update({"site_notice": notice}).eq("id", 1).execute()
+    return {"message": "নোটিশ সফলভাবে আপডেট হয়েছে!"}
+
+# /admin/user - Pagination (20), Search, Ban, Add Balance, Delete
+@app.get("/admin/users")
+def get_admin_users(page: int = 1, search: str = ""):
+    limit = 20
+    start = (page - 1) * limit
+    end = start + limit - 1
+
+    query = supabase.table("users").select("*", count="exact")
+    if search:
+        query = query.ilike("email", f"%{search}%")
+
+    return query.range(start, end).order("created_at", desc=True).execute()
+
+@app.post("/admin/user/{user_id}/ban")
+def toggle_ban(user_id: str, is_banned: bool = Query(...)):
+    supabase.table("users").update({"is_banned": is_banned}).eq("id", user_id).execute()
+    return {"message": "ইউজার স্ট্যাটাস পরিবর্তিত হয়েছে"}
+
+@app.post("/admin/user/{user_id}/balance")
+def admin_add_balance(user_id: str, amount: float = Query(...)):
+    user = supabase.table("users").select("balance").eq("id", user_id).execute().data[0]
+    supabase.table("users").update({"balance": user["balance"] + amount}).eq("id", user_id).execute()
+    return {"message": "ব্যালেন্স অ্যাড সফল হয়েছে"}
+
+@app.delete("/admin/user/{user_id}")
+def delete_user(user_id: str):
+    supabase.table("users").delete().eq("id", user_id).execute()
+    return {"message": "ইউজার মুছে ফেলা হয়েছে"}
+
+# /admin/task - Add Task
+@app.post("/admin/task")
+def add_new_task(data: TaskCreateSchema):
+    res = supabase.table("tasks").insert(data.dict()).execute()
+    return {"message": "টাস্ক সফলভাবে তৈরি হয়েছে", "data": res.data}
+
+# /admin/submit - Bulk (Max 30, Random Reject 3)
+@app.post("/admin/submit/bulk")
+def bulk_process_submissions():
+    pending = supabase.table("task_submissions").select("*, tasks(amount)").eq("status", "pending").limit(30).execute().data
+    if not pending:
+        return {"message": "কোনো পেন্ডিং সাবমিশন নেই"}
+
+    reject_count = min(3, len(pending))
+    reject_indices = set(random.sample(range(len(pending)), reject_count))
+
+    for idx, item in enumerate(pending):
+        if idx in reject_indices:
+            supabase.table("task_submissions").update({"status": "rejected"}).eq("id", item["id"]).execute()
+        else:
+            reward = item["tasks"]["amount"] if item.get("tasks") else 10.0
+            supabase.table("task_submissions").update({"status": "approved"}).eq("id", item["id"]).execute()
+            user = supabase.table("users").select("balance").eq("id", item["user_id"]).execute().data[0]
+            supabase.table("users").update({"balance": user["balance"] + reward}).eq("id", item["user_id"]).execute()
+
+    return {"message": f"{len(pending)} টি সাবমিশন প্রসেস করা হয়েছে (৩টি রিজেক্ট হয়েছে)"}
+
+# /admin/withdraw - Withdraw list with reject count
+@app.get("/admin/withdraw")
+def get_admin_withdrawals():
+    withdrawals = supabase.table("withdrawals").select("*, users(email)").order("created_at", desc=True).execute().data
+    for item in withdrawals:
+        rejections = supabase.table("withdrawals").select("id", count="exact").eq("user_id", item["user_id"]).eq("status", "rejected").execute().count
+        item["user_total_rejections"] = rejections
+    return withdrawals
+
+# /admin/imgbb - ImgBB API Manager
+@app.get("/admin/imgbb")
+def get_imgbb_keys():
+    return supabase.table("imgbb_keys").select("*").execute().data
+
+@app.post("/admin/imgbb")
+def add_imgbb_key(api_key: str = Query(...)):
+    res = supabase.table("imgbb_keys").insert({"api_key": api_key}).execute()
+    return {"message": "ImgBB Key যুক্ত হয়েছে", "data": res.data}
+
+@app.delete("/admin/imgbb/{key_id}")
+def delete_imgbb_key(key_id: str):
+    supabase.table("imgbb_keys").delete().eq("id", key_id).execute()
+    return {"message": "ImgBB Key মুছে ফেলা হয়েছে"}
+
+# ==========================================
+# ৯. ROOT
+# ==========================================
 @app.get("/")
 def home():
-    return {"status": "MicroEarnX API is running successfully!"}
+    return {"status": "success", "message": "MicroEarnX API is running smoothly on Vercel!"}
