@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroEarnX - সহজে অনলাইন থেকে আয় করুন</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Hind Siliguri', sans-serif; }</style>
+</head>
+<body class="bg-[#FFF1F2] text-gray-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-rose-100 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-600 to-red-500 flex items-center justify-center text-white shadow-md shadow-rose-500/30">
+                <i class="fa-solid fa-coins text-sm"></i>
+            </div>
+            <span class="text-xl font-bold tracking-tight text-gray-800">MICRO<span class="text-rose-600">EARNX</span>⚡</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/login" class="text-xs font-bold text-gray-700 hover:text-rose-600 px-3 py-2">লগইন</a>
+            <a href="/register" class="bg-gradient-to-r from-rose-600 to-red-600 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-md shadow-rose-600/25 active:scale-95 transition">শুরু করুন</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="max-w-md mx-auto p-6 text-center space-y-6 my-auto">
+        <div class="inline-flex items-center gap-2 bg-rose-100/70 border border-rose-200 text-rose-700 text-xs px-3.5 py-1.5 rounded-full font-semibold">
+            <i class="fa-solid fa-gift"></i> রেফারে জয়েন করলেই ১০০ ৳ বোনাস!
+        </div>
+
+        <h1 class="text-3xl font-extrabold text-gray-900 leading-tight">
+            দৈনন্দিন ছোট টাস্ক পূরণ করে <span class="text-rose-600">আয় করুন ঘরে বসেই</span>
+        </h1>
+
+        <p class="text-xs text-gray-500 leading-relaxed px-4">
+            টাস্ক কমপ্লিট, স্পিন, স্ক্র্যাচ কার্ড এবং বন্ধুদের রেফার করে সরাসরি বিকাশ ও নগদে পেমেন্ট গ্রহণ করুন।
+        </p>
+
+        <!-- Feature Points -->
+        <div class="grid grid-cols-2 gap-3 text-left">
+            <div class="bg-white/80 border border-rose-100 p-4 rounded-2xl shadow-sm space-y-1">
+                <i class="fa-solid fa-money-bill-transfer text-emerald-500 text-xl"></i>
+                <h4 class="font-bold text-xs">দ্রুত উইথড্র</h4>
+                <p class="text-[11px] text-gray-400">সর্বনিম্ন ৫০০ টাকা হলে সরাসরি বিকাশ/নগদে ক্যাশআউট।</p>
+            </div>
+            <div class="bg-white/80 border border-rose-100 p-4 rounded-2xl shadow-sm space-y-1">
+                <i class="fa-solid fa-shield-halved text-rose-500 text-xl"></i>
+                <h4 class="font-bold text-xs">১০০% বিশ্বস্ত</h4>
+                <p class="text-[11px] text-gray-400">১ ডিভাইসে ১ একাউন্ট ও নিরাপদ পেমেন্ট সিস্টেম।</p>
+            </div>
+        </div>
+
+        <!-- Call to Actions -->
+        <div class="space-y-2.5 pt-2">
+            <a href="/register" class="w-full block bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 text-white font-bold py-3.5 rounded-2xl text-sm shadow-lg shadow-rose-600/30 active:scale-95 transition">
+                <i class="fa-solid fa-user-plus mr-1"></i> একাউন্ট খুলুন (৫০ ৳ ফ্রি)
+            </a>
+            <a href="/login" class="w-full block bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3.5 rounded-2xl text-sm border border-gray-200 shadow-sm active:scale-95 transition">
+                <i class="fa-solid fa-right-to-bracket mr-1"></i> লগইন করুন
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-[11px] text-gray-400 border-t border-rose-100 bg-white/50">
+        © 2025 MicroEarnX. সর্বস্বত্ব সংরক্ষিত।
+    </footer>
+
+    <!-- লগইন করা থাকলে সোজা ড্যাশবোর্ডে পাঠাবে -->
+    <script>
+        const user = localStorage.getItem("mex_user");
+        if (user) {
+            window.location.replace("/dashboard");
+        }
+    </script>
+</body>
+          </html>
