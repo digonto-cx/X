@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>এডমিন কন্ট্রোল প্যানেল</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-gray-900 border-r border-gray-800 min-h-screen p-4 space-y-6">
+            <h2 class="text-lg font-bold text-yellow-500 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved"></i> এডমিন প্যানেল
+            </h2>
+            <nav class="space-y-1 text-sm">
+                <a href="/admin" class="block bg-yellow-500 text-gray-950 font-bold p-2.5 rounded-lg"><i class="fa-solid fa-chart-line mr-2"></i> ড্যাশবোর্ড</a>
+                <a href="/admin/users.html" class="block hover:bg-gray-800 p-2.5 rounded-lg text-gray-400"><i class="fa-solid fa-users mr-2"></i> ইউজার লিস্ট</a>
+                <a href="/admin/submissions.html" class="block hover:bg-gray-800 p-2.5 rounded-lg text-gray-400"><i class="fa-solid fa-file-invoice mr-2"></i> পেন্ডিং সাবমিশন</a>
+                <a href="/admin/withdraw.html" class="block hover:bg-gray-800 p-2.5 rounded-lg text-gray-400"><i class="fa-solid fa-money-bill-transfer mr-2"></i> উইথড্র রিকোয়েস্ট</a>
+                <a href="/admin/imgbb.html" class="block hover:bg-gray-800 p-2.5 rounded-lg text-gray-400"><i class="fa-solid fa-images mr-2"></i> ImgBB API Keys</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 space-y-6">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-4 gap-4">
+                <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl">
+                    <p class="text-xs text-gray-400">টোটাল ইউজার</p>
+                    <h3 id="total_users" class="text-2xl font-bold mt-1 text-yellow-500">0</h3>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl">
+                    <p class="text-xs text-gray-400">আজকের নতুন ইউজার</p>
+                    <h3 id="today_users" class="text-2xl font-bold mt-1 text-green-400">0</h3>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl">
+                    <p class="text-xs text-gray-400">গতকালকের ইউজার</p>
+                    <h3 id="yesterday_users" class="text-2xl font-bold mt-1 text-blue-400">0</h3>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl">
+                    <p class="text-xs text-gray-400">আজকের সাবমিশন</p>
+                    <h3 id="today_submissions" class="text-2xl font-bold mt-1 text-purple-400">0</h3>
+                </div>
+            </div>
+
+            <!-- Site Notice Setting -->
+            <div class="bg-gray-900 border border-gray-800 p-5 rounded-xl space-y-3">
+                <h4 class="font-bold text-sm text-yellow-500 flex items-center gap-2">
+                    <i class="fa-solid fa-bullhorn"></i> সাইট নোটিশ পরিবর্তন করুন
+                </h4>
+                <textarea id="current_notice" rows="2" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-3 text-sm outline-none text-white"></textarea>
+                <button onclick="updateNotice()" class="bg-yellow-500 text-gray-950 font-bold px-4 py-2 rounded-lg text-sm">
+                    আপডেট করুন
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/admin.js"></script>
+    <script>loadAdminDashboard();</script>
+</body>
+                      </html>
