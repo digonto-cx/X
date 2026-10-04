@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroEarnX - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Hind Siliguri', sans-serif; }</style>
+</head>
+<body class="bg-[#FFF1F2] min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_rgba(255,182,193,0.3)] rounded-[38px] p-8 w-full max-w-sm space-y-6">
+        
+        <!-- Header -->
+        <div class="text-center">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-600 to-red-500 flex items-center justify-center text-white shadow-md shadow-rose-500/30">
+                    <i class="fa-solid fa-coins text-sm"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-gray-800">MICRO<span class="text-rose-600">EARNX</span>⚡</span>
+            </div>
+            <p class="text-xs text-gray-400">আপনার একাউন্টে প্রবেশ করুন</p>
+        </div>
+
+        <form onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+                <label class="text-xs text-gray-500 font-medium ml-1">ইমেইল এড্রেস</label>
+                <div class="relative mt-1">
+                    <i class="fa-solid fa-envelope absolute left-4 top-3.5 text-gray-400 text-xs"></i>
+                    <input id="email" type="email" required placeholder="name@email.com" class="w-full bg-[#FFF8F8] border border-rose-100 rounded-2xl pl-10 pr-4 py-3 text-xs focus:border-rose-400 outline-none transition">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-500 font-medium ml-1">পাসওয়ার্ড</label>
+                <div class="relative mt-1">
+                    <i class="fa-solid fa-lock absolute left-4 top-3.5 text-gray-400 text-xs"></i>
+                    <input id="password" type="password" required placeholder="••••••••" class="w-full bg-[#FFF8F8] border border-rose-100 rounded-2xl pl-10 pr-4 py-3 text-xs focus:border-rose-400 outline-none transition">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-semibold py-3.5 rounded-2xl text-sm shadow-lg shadow-rose-600/25 active:scale-[0.98] transition">
+                লগইন করুন
+            </button>
+        </form>
+
+        <p class="text-center text-xs text-gray-500">
+            নতুন একাউন্ট খুলতে চান? <a href="/register" class="text-rose-600 font-bold hover:underline">রেজিস্ট্রেশন</a>
+        </p>
+    </div>
+
+    <script src="/assets/js/fingerprint.js"></script>
+    <script src="/assets/js/auth.js"></script>
+</body>
+</html>
