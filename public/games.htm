@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টাস্ক প্রুফ জমা দিন</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body class="bg-gray-950 text-white min-h-screen p-4">
+    <div class="max-w-md mx-auto space-y-4">
+        <a href="/tasks" class="text-gray-400 text-sm block"><i class="fa-solid fa-arrow-left"></i> ব্যাক</a>
+
+        <div class="bg-gray-900 border border-gray-800 p-5 rounded-2xl space-y-4">
+            <h2 id="task_title" class="font-bold text-lg text-yellow-500">লোড হচ্ছে...</h2>
+            <p id="task_desc" class="text-xs text-gray-400 leading-relaxed"></p>
+
+            <a id="task_link" target="_blank" class="block w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg text-sm">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> কাজের লিংকে যান
+            </a>
+
+            <form onsubmit="handleTaskSubmit(event)" class="space-y-3 border-t border-gray-800 pt-4">
+                <label class="text-xs text-gray-300 block">কাজের স্ক্রিনশট প্রুফ দিন:</label>
+                <input type="file" id="proof_image" accept="image/*" required class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-500 file:text-gray-950 cursor-pointer">
+
+                <button id="submit_btn" type="submit" class="w-full bg-yellow-500 hover:bg-yellow-400 text-gray-950 font-bold py-2.5 rounded-lg text-sm">
+                    প্রুফ সাবমিট করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script>
+        // পেজ লোড হলে টাস্কের ডাটা ব্যাকএন্ড থেকে ফেচ করা
+        const urlParams = new URLSearchParams(window.location.search);
+        const taskId = urlParams.get("id");
+        fetch(`/api/task/${taskId}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("task_title").innerText = data.title;
+                document.getElementById("task_desc").innerText = data.description;
+                document.getElementById("task_link").href = data.link;
+            });
+    </script>
+</body>
+</html>
