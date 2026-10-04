@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "builds": [
     {
       "src": "api/index.py",
@@ -16,12 +17,28 @@
       "dest": "api/index.py"
     },
     {
-      "src": "/admin/(.*)",
-      "dest": "/public/admin/$1"
-    },
-    {
       "src": "/admin",
       "dest": "/public/admin/index.html"
+    },
+    {
+      "src": "/admin/user",
+      "dest": "/public/admin/users.html"
+    },
+    {
+      "src": "/admin/task",
+      "dest": "/public/admin/tasks.html"
+    },
+    {
+      "src": "/admin/submit",
+      "dest": "/public/admin/submissions.html"
+    },
+    {
+      "src": "/admin/withdraw",
+      "dest": "/public/admin/withdraw.html"
+    },
+    {
+      "src": "/admin/imgbb",
+      "dest": "/public/admin/imgbb.html"
     },
     {
       "src": "/tasks",
