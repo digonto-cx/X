@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroEarnX - রেজিস্ট্রেশন</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
+    <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl w-full max-w-sm space-y-5">
+        <div class="text-center">
+            <h1 class="text-2xl font-bold text-yellow-500 flex justify-center items-center gap-2">
+                <i class="fa-solid fa-coins"></i> MicroEarnX
+            </h1>
+            <p class="text-xs text-gray-400 mt-1">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+        </div>
+
+        <form onsubmit="handleRegister(event)" class="space-y-4">
+            <div>
+                <label class="text-xs text-gray-400">ইমেইল এড্রেস</label>
+                <div class="relative mt-1">
+                    <i class="fa-solid fa-envelope absolute left-3 top-3 text-gray-500"></i>
+                    <input id="email" type="email" required placeholder="example@mail.com" class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-10 pr-3 py-2 text-sm focus:border-yellow-500 outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">পাসওয়ার্ড</label>
+                <div class="relative mt-1">
+                    <i class="fa-solid fa-lock absolute left-3 top-3 text-gray-500"></i>
+                    <input id="password" type="password" required placeholder="••••••••" class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-10 pr-3 py-2 text-sm focus:border-yellow-500 outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400">রেফার কোড (থাকলে দিন - বোনাস ১০০ ৳)</label>
+                <div class="relative mt-1">
+                    <i class="fa-solid fa-user-plus absolute left-3 top-3 text-gray-500"></i>
+                    <input id="referral_code" type="text" placeholder="MEX123456" class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-10 pr-3 py-2 text-sm focus:border-yellow-500 outline-none uppercase">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-yellow-500 text-gray-950 font-bold py-2.5 rounded-lg text-sm hover:bg-yellow-400 transition">
+                একাউন্ট খুলুন
+            </button>
+        </form>
+
+        <p class="text-center text-xs text-gray-400">
+            ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="/login" class="text-yellow-500 font-semibold">লগইন করুন</a>
+        </p>
+    </div>
+
+    <script src="/assets/js/fingerprint.js"></script>
+    <script src="/assets/js/auth.js"></script>
+</body>
+</html>
