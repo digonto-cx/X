@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>উইথড্র রিকোয়েস্ট</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body class="bg-gray-950 text-white min-h-screen p-4">
+    <div class="max-w-md mx-auto space-y-4">
+        <a href="/" class="text-gray-400 text-sm block"><i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ড</a>
+
+        <div class="bg-gray-900 border border-gray-800 p-5 rounded-2xl space-y-4">
+            <h2 class="font-bold text-lg text-yellow-500 flex items-center gap-2">
+                <i class="fa-solid fa-money-bill-wave"></i> টাকা উত্তোলন করুন
+            </h2>
+
+            <div class="bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-red-400 text-xs space-y-1">
+                <p>⚠️ <b>উইথড্র শর্তাবলী:</b></p>
+                <p>১. সর্বনিম্ন উইথড্র ৫০০ টাকা হতে হবে।</p>
+                <p>২. কমপক্ষে ৪টি ভ্যালিড রেফার থাকতে হবে।</p>
+            </div>
+
+            <form onsubmit="handleWithdraw(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400">মেথড সিলেক্ট করুন</label>
+                    <select id="method" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm mt-1 outline-none text-white">
+                        <option value="Bkash">বিকাশ (Bkash)</option>
+                        <option value="Nagad">নগদ (Nagad)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400">একাউন্ট নাম্বার</label>
+                    <input id="account_number" type="text" placeholder="017xxxxxxxx" required class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm mt-1 outline-none">
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400">পরিমাণ (সর্বনিম্ন ৫০০)</label>
+                    <input id="amount" type="number" min="500" placeholder="500" required class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-sm mt-1 outline-none">
+                </div>
+
+                <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-400 text-gray-950 font-bold py-2.5 rounded-lg text-sm">
+                    রিকোয়েস্ট পাঠান
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>
