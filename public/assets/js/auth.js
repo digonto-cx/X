@@ -1,10 +1,13 @@
 const API_BASE = "/api";
 
 // ==========================================
-// ১. সেশন গার্ড (AUTH GUARDS)
+// ১. সেশন গার্ড ও রিডাইরেক্ট লজিক (AUTH GUARDS)
 // ==========================================
 
-// প্রোটেক্টেড পেজের জন্য চেক (যেমন: ড্যাশবোর্ড, টাস্ক, উইথড্র)
+/**
+ * সুরক্ষিত পেজের গার্ড (ড্যাশবোর্ড, টাস্ক, উইথড্র, ইত্যাদি)
+ * লগইন না থাকলে সাথে সাথে /login পেজে পাঠিয়ে দেবে
+ */
 function checkUserAuth() {
     const userStr = localStorage.getItem("mex_user");
     if (!userStr) {
@@ -27,14 +30,17 @@ function checkUserAuth() {
     }
 }
 
-// গেস্ট পেজের গার্ড (লগইন করা থাকলে login বা register পেজে ঢুকতে দেবে না, সোজা ড্যাশবোর্ডে পাঠাবে)
+/**
+ * গেস্ট পেজের গার্ড (Login বা Register পেজের জন্য)
+ * ইউজার ইতিমধ্যে লগইন করা থাকলে সোজা /dashboard এ নিয়ে যাবে
+ */
 function checkGuestAuth() {
     const userStr = localStorage.getItem("mex_user");
     if (userStr) {
         try {
             const user = JSON.parse(userStr);
             if (user && user.id) {
-                window.location.replace("/");
+                window.location.replace("/dashboard");
             }
         } catch (e) {
             localStorage.removeItem("mex_user");
@@ -43,11 +49,12 @@ function checkGuestAuth() {
 }
 
 // ==========================================
-// ২. রেফারেল কোড ডিটেক্টর
+// ২. পেজ লোড ইভেন্ট ও রেফারেল হ্যান্ডলার
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // বর্তমান পেজ লগইন বা রেজিস্টার হলে চেক করবে
     const path = window.location.pathname;
+
+    // লগইন বা রেজিস্টার পেজে থাকলে গেস্ট চেক রান করবে
     if (path.includes("login") || path.includes("register")) {
         checkGuestAuth();
     }
@@ -62,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// ৩. রেজিস্ট্রেশন হ্যান্ডলার
+// ৩. রেজিস্ট্রেশন প্রসেস
 // ==========================================
 async function handleRegister(event) {
     event.preventDefault();
@@ -79,6 +86,10 @@ async function handleRegister(event) {
 
     try {
         // fingerprint.js থেকে ইউনিক ডিভাইস ডাটা নেওয়া
+        if (typeof getDeviceFingerprint !== "function" || typeof getDeviceModel !== "function") {
+            throw new Error("ডিভাইস ডিটেকশন লাইব্রেরি লোড হয়নি, পেজ রিফ্রেশ করুন!");
+        }
+
         const device_id = await getDeviceFingerprint();
         const device_model = getDeviceModel();
 
@@ -100,7 +111,7 @@ async function handleRegister(event) {
             throw new Error(data.detail || "রেজিস্ট্রেশন ব্যর্থ হয়েছে!");
         }
 
-        alert("অভিনন্দন! রেজিস্ট্রেশন সফল হয়েছে। অনুগ্রহ করে লগইন করুন।");
+        alert("অভিনন্দন! অ্যাকাউন্ট তৈরি সফল হয়েছে। অনুগ্রহ করে লগইন করুন।");
         window.location.replace("/login");
 
     } catch (err) {
@@ -111,7 +122,7 @@ async function handleRegister(event) {
 }
 
 // ==========================================
-// ৪. লগইন হ্যান্ডলার
+// ৪. লগইন প্রসেস
 // ==========================================
 async function handleLogin(event) {
     event.preventDefault();
@@ -139,7 +150,9 @@ async function handleLogin(event) {
 
         // ব্রাউজারে ইউজার ডাটা সেভ রাখা
         localStorage.setItem("mex_user", JSON.stringify(data.user));
-        window.location.replace("/");
+
+        // সোজা ড্যাশবোর্ডে নিয়ে যাবে
+        window.location.replace("/dashboard");
 
     } catch (err) {
         alert(err.message);
@@ -149,11 +162,11 @@ async function handleLogin(event) {
 }
 
 // ==========================================
-// ৫. লগআউট
+// ৫. লগআউট প্রসেস
 // ==========================================
 function logout() {
-    if (confirm("আপনি কি নিশ্চিত লগআউট করতে চান?")) {
+    if (confirm("আপনি কি নিশ্চিত আপনার অ্যাকাউন্ট থেকে লগআউট করতে চান?")) {
         localStorage.removeItem("mex_user");
         window.location.replace("/login");
     }
-        }
+}
