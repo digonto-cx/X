@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroEarnX - ড্যাশবোর্ড</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body class="bg-gray-950 text-white min-h-screen pb-20">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center sticky top-0 z-50">
+        <h1 class="text-xl font-bold text-yellow-500 flex items-center gap-2">
+            <i class="fa-solid fa-coins"></i> MicroEarnX
+        </h1>
+        <button onclick="logout()" class="text-gray-400 hover:text-red-500">
+            <i class="fa-solid fa-right-from-bracket text-lg"></i>
+        </button>
+    </nav>
+
+    <div class="max-w-md mx-auto p-4 space-y-4">
+        <!-- Site Notice -->
+        <div class="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-xl flex items-center gap-3 text-yellow-400 text-sm">
+            <i class="fa-solid fa-bullhorn text-lg"></i>
+            <marquee id="site_notice">লোড হচ্ছে...</marquee>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="bg-gradient-to-r from-yellow-600 to-amber-700 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+            <div class="relative z-10">
+                <p class="text-yellow-100 text-sm">বর্তমান ব্যালেন্স</p>
+                <h2 id="user_balance" class="text-3xl font-extrabold mt-1">0.00 ৳</h2>
+                <div class="mt-4 flex gap-2">
+                    <a href="/withdraw" class="bg-white text-gray-950 px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-money-bill-transfer"></i> উইথড্র
+                    </a>
+                </div>
+            </div>
+            <i class="fa-solid fa-wallet text-white/10 text-8xl absolute -right-4 -bottom-4"></i>
+        </div>
+
+        <!-- Quick Earning Grid -->
+        <h3 class="font-bold text-gray-400 text-sm">আর্নিং মেনু</h3>
+        <div class="grid grid-cols-2 gap-3">
+            <a href="/tasks" class="bg-gray-900 p-4 rounded-xl border border-gray-800 flex flex-col items-center justify-center gap-2 hover:border-yellow-500/50">
+                <i class="fa-solid fa-list-check text-2xl text-blue-400"></i>
+                <span class="font-semibold text-sm">টাস্ক পূরণ</span>
+            </a>
+            <a href="/games" class="bg-gray-900 p-4 rounded-xl border border-gray-800 flex flex-col items-center justify-center gap-2 hover:border-yellow-500/50">
+                <i class="fa-solid fa-dharmachakra text-2xl text-purple-400"></i>
+                <span class="font-semibold text-sm">স্পিন & স্ক্র্যাচ</span>
+            </a>
+        </div>
+
+        <!-- Referral Card -->
+        <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-2">
+            <h4 class="font-bold text-sm text-yellow-500 flex items-center gap-2">
+                <i class="fa-solid fa-users"></i> রেফার করে আয় করুন (১৫ ৳)
+            </h4>
+            <p class="text-xs text-gray-400">আপনার লিংকে জয়েন করলে সে পাবে ১০০ ৳, আপনি পাবেন ১৫ ৳!</p>
+            <div class="flex gap-2">
+                <input id="refer_link" readonly class="bg-gray-950 border border-gray-700 text-xs px-3 py-2 rounded-lg w-full text-gray-300">
+                <button onclick="navigator.clipboard.writeText(document.getElementById('refer_link').value); alert('লিংক কপি হয়েছে!')" 
+                        class="bg-yellow-500 text-gray-950 px-3 py-2 rounded-lg font-bold text-xs">
+                    কপি
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/fingerprint.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script>loadDashboard();</script>
+</body>
+</html>
