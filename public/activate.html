@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাকাউন্ট ভেরিফিকেশন ও অ্যাক্টিভেশন - TaskBee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script src="/assets/js/main.js"></script>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen pb-16 selection:bg-yellow-400">
+    <script>checkAuth();</script>
+
+    <main class="max-w-xl mx-auto p-4 sm:p-6 space-y-6">
+
+        <!-- হেডার -->
+        <div class="text-center space-y-2">
+            <div class="w-12 h-12 rounded-2xl bg-yellow-400/20 border border-yellow-400/40 p-1 mx-auto flex items-center justify-center">
+                <img src="https://i.ibb.co.com/ZZ1GyTp/3011-removebg-preview.png" alt="TaskBee" class="w-full h-full object-contain">
+            </div>
+            <h1 class="text-2xl font-black text-slate-900">অ্যাকাউন্ট অ্যাক্টিভেশন</h1>
+            <p class="text-xs text-slate-500">নিয়মিত ও দায়িত্বশীল মেম্বারদের জন্য অ্যাক্টিভেশন প্রক্রিয়া</p>
+        </div>
+
+        <!-- সুবিধা তালিকা -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+            <h3 class="text-xs font-black uppercase text-slate-400 tracking-wider">অ্যাক্টিভেশনের সুবিধাসমূহ</h3>
+            <div class="space-y-2.5 text-xs text-slate-700">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check"></i></span>
+                    <span>উত্তোলনের জন্য কোনো রেফারেলের বাধ্যবাধকতা থাকবে না।</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check"></i></span>
+                    <span>নূন্যতম উত্তোলন সীমা ১৫০ টাকা।</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px]"><i class="fa-solid fa-check"></i></span>
+                    <span>উইথড্রয়াল রিকোয়েস্ট দ্রুততম সময়ে প্রসেস করা হবে।</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- পেমেন্ট ইন্সট্রাকশন -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+            <h3 class="text-xs font-black uppercase text-slate-400 tracking-wider">পেমেন্ট নির্দেশিকা (ফি: ৪০ টাকা)</h3>
+            
+            <p class="text-xs text-slate-600 leading-relaxed">
+                নিচের যেকোনো একটি নম্বরে ৪০ টাকা <b>Send Money</b> করুন এবং ট্রানজেকশন তথ্য নিচে দিন।
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <!-- bKash -->
+                <div class="p-3.5 bg-pink-50 border border-pink-200 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <span class="font-bold text-pink-700 block">bKash Personal</span>
+                        <span class="font-mono text-slate-800 font-bold text-sm">01618897806</span>
+                    </div>
+                    <button onclick="copyNumber('01618897806')" class="px-2.5 py-1 bg-white border border-pink-200 text-pink-700 rounded-lg font-bold hover:bg-pink-100">কপি</button>
+                </div>
+
+                <!-- Nagad -->
+                <div class="p-3.5 bg-orange-50 border border-orange-200 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <span class="font-bold text-orange-700 block">Nagad Personal</span>
+                        <span class="font-mono text-slate-800 font-bold text-sm">01912107604</span>
+                    </div>
+                    <button onclick="copyNumber('01912107604')" class="px-2.5 py-1 bg-white border border-orange-200 text-orange-700 rounded-lg font-bold hover:bg-orange-100">কপি</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ফর্ম সাবমিশন -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+            <h3 class="text-xs font-black uppercase text-slate-400 tracking-wider">ট্রানজেকশন তথ্য জমা দিন</h3>
+
+            <form id="actForm" class="space-y-3.5">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">পেমেন্ট মেথড</label>
+                    <select id="pMethod" required class="w-full text-xs p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-slate-50">
+                        <option value="bKash">bKash</option>
+                        <option value="Nagad">Nagad</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">যে নম্বর থেকে টাকা পাঠিয়েছেন</label>
+                    <input type="text" id="senderNum" placeholder="যেমন: 017xxxxxxxx" required class="w-full text-xs p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Transaction ID (TrxID)</label>
+                    <input type="text" id="trxId" placeholder="যেমন: 9M3K8L2P" required class="w-full text-xs p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 font-mono uppercase">
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full py-3.5 bg-yellow-400 hover:bg-yellow-500 text-slate-950 font-black rounded-xl text-xs transition">
+                    অ্যাক্টিভেশন রিকোয়েস্ট পাঠান
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <script>
+        const user = getUser();
+
+        function copyNumber(num) {
+            navigator.clipboard.writeText(num);
+            alert("নম্বর কপি হয়েছে: " + num);
+        }
+
+        document.getElementById('actForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "যাচাই করা হচ্ছে...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/user/activate`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: user.id,
+                        payment_method: document.getElementById('pMethod').value,
+                        sender_number: document.getElementById('senderNum').value,
+                        trx_id: document.getElementById('trxId').value
+                    })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail);
+
+                alert(data.message);
+                window.location.href = "/dashboard";
+            } catch (err) {
+                alert(err.message);
+                btn.innerText = "অ্যাক্টিভেশন রিকোয়েস্ট পাঠান";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+                      </html>
