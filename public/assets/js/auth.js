@@ -1,13 +1,11 @@
-const API_BASE = "/api";
+// নিশ্চিত করা হচ্ছে কল যেন সরাসরি ডোমেইনের /api রুটে যায়
+const API_BASE = window.location.origin + "/api";
 
 // ==========================================
-// ১. সেশন গার্ড ও রিডাইরেক্ট লজিক (AUTH GUARDS)
+// ১. সেশন ও রিডাইরেক্ট গার্ড (AUTH GUARDS)
 // ==========================================
 
-/**
- * সুরক্ষিত পেজের গার্ড (ড্যাশবোর্ড, টাস্ক, উইথড্র, ইত্যাদি)
- * লগইন না থাকলে সাথে সাথে /login পেজে পাঠিয়ে দেবে
- */
+// ড্যাশবোর্ড, টাস্ক ইত্যাদির জন্য সিকিউরিটি চেক
 function checkUserAuth() {
     const userStr = localStorage.getItem("mex_user");
     if (!userStr) {
@@ -30,10 +28,7 @@ function checkUserAuth() {
     }
 }
 
-/**
- * গেস্ট পেজের গার্ড (Login বা Register পেজের জন্য)
- * ইউজার ইতিমধ্যে লগইন করা থাকলে সোজা /dashboard এ নিয়ে যাবে
- */
+// লগইন করা থাকলে লগইন/রেজিস্টার পেজে ঢুকতে দেবে না
 function checkGuestAuth() {
     const userStr = localStorage.getItem("mex_user");
     if (userStr) {
@@ -49,12 +44,12 @@ function checkGuestAuth() {
 }
 
 // ==========================================
-// ২. পেজ লোড ইভেন্ট ও রেফারেল হ্যান্ডলার
+// ২. পেজ লোড ও রেফার কোড হ্যান্ডলার
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     const path = window.location.pathname;
 
-    // লগইন বা রেজিস্টার পেজে থাকলে গেস্ট চেক রান করবে
+    // লগইন বা রেজিস্টার পেজে ঢুকলে চেক করবে ইতিমধ্যে লগইন আছে কিনা
     if (path.includes("login") || path.includes("register")) {
         checkGuestAuth();
     }
@@ -69,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// ৩. রেজিস্ট্রেশন প্রসেস
+// ৩. রেজিস্ট্রেশন হ্যান্ডলার
 // ==========================================
 async function handleRegister(event) {
     event.preventDefault();
@@ -86,16 +81,23 @@ async function handleRegister(event) {
 
     try {
         // fingerprint.js থেকে ইউনিক ডিভাইস ডাটা নেওয়া
-        if (typeof getDeviceFingerprint !== "function" || typeof getDeviceModel !== "function") {
-            throw new Error("ডিভাইস ডিটেকশন লাইব্রেরি লোড হয়নি, পেজ রিফ্রেশ করুন!");
+        let device_id = "DEV_DEFAULT";
+        let device_model = "Generic Mobile";
+
+        if (typeof getDeviceFingerprint === "function") {
+            device_id = await getDeviceFingerprint();
+        }
+        if (typeof getDeviceModel === "function") {
+            device_model = getDeviceModel();
         }
 
-        const device_id = await getDeviceFingerprint();
-        const device_model = getDeviceModel();
-
+        // ⚡ টার্গেট URL: /api/auth/register
         const res = await fetch(`${API_BASE}/auth/register`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
             body: JSON.stringify({
                 email: email,
                 password: password,
@@ -111,7 +113,7 @@ async function handleRegister(event) {
             throw new Error(data.detail || "রেজিস্ট্রেশন ব্যর্থ হয়েছে!");
         }
 
-        alert("অভিনন্দন! অ্যাকাউন্ট তৈরি সফল হয়েছে। অনুগ্রহ করে লগইন করুন।");
+        alert("অভিনন্দন! রেজিস্ট্রেশন সফল হয়েছে। অনুগ্রহ করে লগইন করুন।");
         window.location.replace("/login");
 
     } catch (err) {
@@ -122,7 +124,7 @@ async function handleRegister(event) {
 }
 
 // ==========================================
-// ৪. লগইন প্রসেস
+// ৪. লগইন হ্যান্ডলার
 // ==========================================
 async function handleLogin(event) {
     event.preventDefault();
@@ -136,10 +138,17 @@ async function handleLogin(event) {
     const password = document.getElementById("password").value.trim();
 
     try {
+        // ⚡ টার্গেট URL: /api/auth/login
         const res = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, password: password })
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({ 
+                email: email, 
+                password: password 
+            })
         });
 
         const data = await res.json();
@@ -148,10 +157,10 @@ async function handleLogin(event) {
             throw new Error(data.detail || "লগইন ব্যর্থ হয়েছে!");
         }
 
-        // ব্রাউজারে ইউজার ডাটা সেভ রাখা
+        // ইউজারের সেশন ব্রাউজারে সেভ করা
         localStorage.setItem("mex_user", JSON.stringify(data.user));
 
-        // সোজা ড্যাশবোর্ডে নিয়ে যাবে
+        // ড্যাশবোর্ডে রিডাইরেক্ট
         window.location.replace("/dashboard");
 
     } catch (err) {
@@ -162,10 +171,10 @@ async function handleLogin(event) {
 }
 
 // ==========================================
-// ৫. লগআউট প্রসেস
+// ৫. লগআউট
 // ==========================================
 function logout() {
-    if (confirm("আপনি কি নিশ্চিত আপনার অ্যাকাউন্ট থেকে লগআউট করতে চান?")) {
+    if (confirm("আপনি কি নিশ্চিত আপনার একাউন্ট থেকে লগআউট করতে চান?")) {
         localStorage.removeItem("mex_user");
         window.location.replace("/login");
     }
