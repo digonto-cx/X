@@ -3,54 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MicroEarnX - রেজিস্ট্রেশন</title>
+    <title>MicroEarnX - নতুন একাউন্ট তৈরি করুন</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Hind Siliguri Font for clean Bangla text -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
-    <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl w-full max-w-sm space-y-5">
+<body class="bg-[#FFF1F2] min-h-screen flex items-center justify-center p-4">
+
+    <!-- Main Glass Card Container -->
+    <div class="bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_rgba(255,182,193,0.3)] rounded-[38px] p-8 w-full max-w-sm space-y-6 relative overflow-hidden">
+        
+        <!-- Top Logo -->
         <div class="text-center">
-            <h1 class="text-2xl font-bold text-yellow-500 flex justify-center items-center gap-2">
-                <i class="fa-solid fa-coins"></i> MicroEarnX
-            </h1>
-            <p class="text-xs text-gray-400 mt-1">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-600 to-red-500 flex items-center justify-center text-white shadow-md shadow-rose-500/30">
+                    <i class="fa-solid fa-coins text-sm"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-gray-800">MICRO<span class="text-rose-600">EARNX</span>⚡</span>
+            </div>
+            <p class="text-xs text-gray-400">সহজে ছোট ছোট কাজ করে আয় করুন</p>
         </div>
 
-        <form onsubmit="handleRegister(event)" class="space-y-4">
+        <!-- Bonus Notice Badge -->
+        <div class="bg-rose-50/80 border border-rose-100 rounded-2xl p-3 flex items-center gap-2.5 text-rose-700 text-xs shadow-sm">
+            <i class="fa-solid fa-gift text-base text-rose-500 shrink-0"></i>
+            <span>রেফার কোড ব্যবহার করলে পাবেন <b class="font-bold">১০০ ৳</b> বোনাস! সাধারণ জয়েনে ৫০ ৳।</span>
+        </div>
+
+        <!-- Registration Form -->
+        <form onsubmit="handleRegister(event)" class="space-y-3.5">
+            <!-- Email Input -->
             <div>
-                <label class="text-xs text-gray-400">ইমেইল এড্রেস</label>
+                <label class="text-[11px] text-gray-500 font-semibold ml-1">ইমেইল এড্রেস</label>
                 <div class="relative mt-1">
-                    <i class="fa-solid fa-envelope absolute left-3 top-3 text-gray-500"></i>
-                    <input id="email" type="email" required placeholder="example@mail.com" class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-10 pr-3 py-2 text-sm focus:border-yellow-500 outline-none">
+                    <i class="fa-solid fa-envelope absolute left-4 top-3.5 text-gray-400 text-xs"></i>
+                    <input id="email" type="email" required placeholder="name@email.com" 
+                           class="w-full bg-[#FFF8F8] border border-rose-100 rounded-2xl pl-10 pr-4 py-3 text-xs focus:border-rose-400 focus:bg-white outline-none transition text-gray-700">
                 </div>
             </div>
 
+            <!-- Password Input -->
             <div>
-                <label class="text-xs text-gray-400">পাসওয়ার্ড</label>
+                <label class="text-[11px] text-gray-500 font-semibold ml-1">গোপন পাসওয়ার্ড</label>
                 <div class="relative mt-1">
-                    <i class="fa-solid fa-lock absolute left-3 top-3 text-gray-500"></i>
-                    <input id="password" type="password" required placeholder="••••••••" class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-10 pr-3 py-2 text-sm focus:border-yellow-500 outline-none">
+                    <i class="fa-solid fa-lock absolute left-4 top-3.5 text-gray-400 text-xs"></i>
+                    <input id="password" type="password" required minlength="6" placeholder="কমপক্ষে ৬ ডিজিটের পাসওয়ার্ড" 
+                           class="w-full bg-[#FFF8F8] border border-rose-100 rounded-2xl pl-10 pr-4 py-3 text-xs focus:border-rose-400 focus:bg-white outline-none transition text-gray-700">
                 </div>
             </div>
 
+            <!-- Referral Code Input (Optional) -->
             <div>
-                <label class="text-xs text-gray-400">রেফার কোড (থাকলে দিন - বোনাস ১০০ ৳)</label>
+                <div class="flex justify-between items-center ml-1">
+                    <label class="text-[11px] text-gray-500 font-semibold">রেফার কোড (যদি থাকে)</label>
+                    <span class="text-[10px] text-rose-500 font-medium">+১০০ ৳ বোনাস</span>
+                </div>
                 <div class="relative mt-1">
-                    <i class="fa-solid fa-user-plus absolute left-3 top-3 text-gray-500"></i>
-                    <input id="referral_code" type="text" placeholder="MEX123456" class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-10 pr-3 py-2 text-sm focus:border-yellow-500 outline-none uppercase">
+                    <i class="fa-solid fa-user-plus absolute left-4 top-3.5 text-gray-400 text-xs"></i>
+                    <input id="referral_code" type="text" placeholder="MEX123456" 
+                           class="w-full bg-[#FFF8F8] border border-rose-100 rounded-2xl pl-10 pr-4 py-3 text-xs uppercase focus:border-rose-400 focus:bg-white outline-none transition font-semibold text-gray-700">
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-yellow-500 text-gray-950 font-bold py-2.5 rounded-lg text-sm hover:bg-yellow-400 transition">
-                একাউন্ট খুলুন
+            <!-- Security Badge Info -->
+            <div class="flex items-center gap-1.5 text-[10px] text-gray-400 px-1 pt-1">
+                <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+                <span>১টি ডিভাইসে কেবল ১টি অ্যাকাউন্ট খোলা অনুমোদিত।</span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full mt-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-semibold py-3.5 rounded-2xl text-sm shadow-lg shadow-rose-600/25 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                <span>একাউন্ট তৈরি করুন</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
             </button>
         </form>
 
-        <p class="text-center text-xs text-gray-400">
-            ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="/login" class="text-yellow-500 font-semibold">লগইন করুন</a>
+        <!-- Bottom Login Redirect -->
+        <p class="text-center text-xs text-gray-500 pt-1">
+            ইতিমধ্যে একটি অ্যাকাউন্ট আছে? 
+            <a href="/login" class="text-rose-600 font-bold hover:underline">লগইন করুন</a>
         </p>
+
     </div>
 
+    <!-- Required Scripts -->
     <script src="/assets/js/fingerprint.js"></script>
     <script src="/assets/js/auth.js"></script>
 </body>
