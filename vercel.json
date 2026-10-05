@@ -1,13 +1,14 @@
 {
+  "version": 2,
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/api/:path*",
+      "source": "/api/(.*)",
       "destination": "/api/index.py"
     },
     {
       "source": "/",
-      "destination": "/public/landing.html"
+      "destination": "/public/index.html"
     },
     {
       "source": "/dashboard",
@@ -62,8 +63,8 @@
       "destination": "/public/register.html"
     },
     {
-      "source": "/assets/:match*",
-      "destination": "/public/assets/:match*"
+      "source": "/assets/(.*)",
+      "destination": "/public/assets/$1"
     }
   ]
 }
