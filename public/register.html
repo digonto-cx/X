@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MicroEarnX - নতুন একাউন্ট তৈরি করুন</title>
+    <title>MicroEarnX - একাউন্ট তৈরি করুন</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome CDN -->
@@ -16,7 +16,7 @@
 </head>
 <body class="bg-[#FFF1F2] min-h-screen flex items-center justify-center p-4">
 
-    <!-- Main Glass Card Container -->
+    <!-- Card Container -->
     <div class="bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_50px_rgba(255,182,193,0.3)] rounded-[38px] p-8 w-full max-w-sm space-y-6 relative overflow-hidden">
         
         <!-- Top Logo -->
@@ -36,7 +36,7 @@
             <span>রেফার কোড ব্যবহার করলে পাবেন <b class="font-bold">১০০ ৳</b> বোনাস! সাধারণ জয়েনে ৫০ ৳।</span>
         </div>
 
-        <!-- Registration Form -->
+        <!-- Registration Form (No action attribute to prevent default 404 POST) -->
         <form onsubmit="handleRegister(event)" class="space-y-3.5">
             <!-- Email Input -->
             <div>
@@ -78,13 +78,13 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="w-full mt-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-semibold py-3.5 rounded-2xl text-sm shadow-lg shadow-rose-600/25 active:scale-[0.98] transition flex items-center justify-center gap-2">
+            <button type="submit" class="w-full mt-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-semibold py-3.5 rounded-2xl text-sm shadow-lg shadow-rose-600/25 active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer">
                 <span>একাউন্ট তৈরি করুন</span>
                 <i class="fa-solid fa-arrow-right text-xs"></i>
             </button>
         </form>
 
-        <!-- Bottom Login Redirect -->
+        <!-- Bottom Login Link -->
         <p class="text-center text-xs text-gray-500 pt-1">
             ইতিমধ্যে একটি অ্যাকাউন্ট আছে? 
             <a href="/login" class="text-rose-600 font-bold hover:underline">লগইন করুন</a>
@@ -92,7 +92,7 @@
 
     </div>
 
-    <!-- Required Scripts -->
+    <!-- Scripts -->
     <script src="/assets/js/fingerprint.js"></script>
     <script src="/assets/js/auth.js"></script>
 </body>
