@@ -3,12 +3,36 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/api/:path*",
+      "source": "/api/(.*)",
       "destination": "/api/index.py"
+    },
+    {
+      "source": "/login",
+      "destination": "/public/login.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/public/register.html"
     },
     {
       "source": "/dashboard",
       "destination": "/public/dashboard.html"
+    },
+    {
+      "source": "/tasks",
+      "destination": "/public/tasks.html"
+    },
+    {
+      "source": "/task/(.*)",
+      "destination": "/public/task-details.html?id=$1"
+    },
+    {
+      "source": "/withdraw",
+      "destination": "/public/withdraw.html"
+    },
+    {
+      "source": "/games",
+      "destination": "/public/games.html"
     },
     {
       "source": "/admin",
@@ -35,32 +59,8 @@
       "destination": "/public/admin/imgbb.html"
     },
     {
-      "source": "/tasks",
-      "destination": "/public/tasks.html"
-    },
-    {
-      "source": "/task/:id",
-      "destination": "/public/task-details.html?id=:id"
-    },
-    {
-      "source": "/withdraw",
-      "destination": "/public/withdraw.html"
-    },
-    {
-      "source": "/games",
-      "destination": "/public/games.html"
-    },
-    {
-      "source": "/login",
-      "destination": "/public/login.html"
-    },
-    {
-      "source": "/register",
-      "destination": "/public/register.html"
-    },
-    {
-      "source": "/assets/:path*",
-      "destination": "/public/assets/:path*"
+      "source": "/assets/(.*)",
+      "destination": "/public/assets/$1"
     },
     {
       "source": "/",
