@@ -1,70 +1,80 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "src": "api/index.py",
+      "use": "@vercel/python"
     },
     {
-      "source": "/",
-      "destination": "/public/index.html"
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
     },
     {
-      "source": "/dashboard",
-      "destination": "/public/dashboard.html"
+      "src": "/assets/(.*)",
+      "dest": "/public/assets/$1"
     },
     {
-      "source": "/admin",
-      "destination": "/public/admin/index.html"
+      "src": "/dashboard",
+      "dest": "/public/dashboard.html"
     },
     {
-      "source": "/admin/user",
-      "destination": "/public/admin/users.html"
+      "src": "/admin",
+      "dest": "/public/admin/index.html"
     },
     {
-      "source": "/admin/task",
-      "destination": "/public/admin/tasks.html"
+      "src": "/admin/user",
+      "dest": "/public/admin/users.html"
     },
     {
-      "source": "/admin/submit",
-      "destination": "/public/admin/submissions.html"
+      "src": "/admin/task",
+      "dest": "/public/admin/tasks.html"
     },
     {
-      "source": "/admin/withdraw",
-      "destination": "/public/admin/withdraw.html"
+      "src": "/admin/submit",
+      "dest": "/public/admin/submissions.html"
     },
     {
-      "source": "/admin/imgbb",
-      "destination": "/public/admin/imgbb.html"
+      "src": "/admin/withdraw",
+      "dest": "/public/admin/withdraw.html"
     },
     {
-      "source": "/tasks",
-      "destination": "/public/tasks.html"
+      "src": "/admin/imgbb",
+      "dest": "/public/admin/imgbb.html"
     },
     {
-      "source": "/task/:id",
-      "destination": "/public/task-details.html?id=:id"
+      "src": "/tasks",
+      "dest": "/public/tasks.html"
     },
     {
-      "source": "/withdraw",
-      "destination": "/public/withdraw.html"
+      "src": "/task/(.*)",
+      "dest": "/public/task-details.html?id=$1"
     },
     {
-      "source": "/games",
-      "destination": "/public/games.html"
+      "src": "/withdraw",
+      "dest": "/public/withdraw.html"
     },
     {
-      "source": "/login",
-      "destination": "/public/login.html"
+      "src": "/games",
+      "dest": "/public/games.html"
     },
     {
-      "source": "/register",
-      "destination": "/public/register.html"
+      "src": "/login",
+      "dest": "/public/login.html"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/public/assets/$1"
+      "src": "/register",
+      "dest": "/public/register.html"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
     }
   ]
 }
