@@ -7,60 +7,64 @@
       "destination": "/api/index.py"
     },
     {
-      "source": "/task/:id",
-      "destination": "/task-details.html?id=:id"
-    },
-    {
-      "source": "/admin/user",
-      "destination": "/admin/users.html"
-    },
-    {
-      "source": "/admin/task",
-      "destination": "/admin/tasks.html"
-    },
-    {
-      "source": "/admin/submit",
-      "destination": "/admin/submissions.html"
-    },
-    {
-      "source": "/admin/withdraw",
-      "destination": "/admin/withdraw.html"
-    },
-    {
-      "source": "/admin/imgbb",
-      "destination": "/admin/imgbb.html"
+      "source": "/assets/(.*)",
+      "destination": "/public/assets/$1"
     },
     {
       "source": "/admin",
-      "destination": "/admin/index.html"
+      "destination": "/public/admin/index.html"
+    },
+    {
+      "source": "/admin/user",
+      "destination": "/public/admin/users.html"
+    },
+    {
+      "source": "/admin/task",
+      "destination": "/public/admin/tasks.html"
+    },
+    {
+      "source": "/admin/submit",
+      "destination": "/public/admin/submissions.html"
+    },
+    {
+      "source": "/admin/withdraw",
+      "destination": "/public/admin/withdraw.html"
+    },
+    {
+      "source": "/admin/imgbb",
+      "destination": "/public/admin/imgbb.html"
     },
     {
       "source": "/dashboard",
-      "destination": "/dashboard.html"
+      "destination": "/public/dashboard.html"
     },
     {
       "source": "/tasks",
-      "destination": "/tasks.html"
+      "destination": "/public/tasks.html"
+    },
+    {
+      "source": "/task/:id",
+      "destination": "/public/task-details.html?id=:id"
     },
     {
       "source": "/withdraw",
-      "destination": "/withdraw.html"
+      "destination": "/public/withdraw.html"
     },
     {
       "source": "/games",
-      "destination": "/games.html"
+      "destination": "/public/games.html"
     },
     {
       "source": "/login",
-      "destination": "/login.html"
+      "destination": "/public/login.html"
     },
     {
       "source": "/register",
-      "destination": "/register.html"
+      "destination": "/public/register.html"
     },
     {
       "source": "/",
-      "destination": "/index.html"
+      "destination": "/public/index.html"
     }
   ]
 }
